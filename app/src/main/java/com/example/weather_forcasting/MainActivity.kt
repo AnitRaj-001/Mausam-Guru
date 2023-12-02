@@ -26,6 +26,9 @@ class MainActivity : AppCompatActivity() {
         fetchWeatherData("patna")
         searchCity()
     }
+    fun kelvinToCelsius(kelvin: Double): Double {
+        return kelvin - 273.15
+    }
 
     private fun searchCity() {
         val searchView = binding.searchView
@@ -49,13 +52,14 @@ class MainActivity : AppCompatActivity() {
             .baseUrl("https://api.openweathermap.org/data/2.5/")
             .build().create(ApiInterface::class.java)
         val response =
-            retrofit.getWeatherData(cityName, "dff8a2d6228867670b804fe5debbfa5b", "matric")
+            retrofit.getWeatherData(cityName, "dff8a2d6228867670b804fe5debbfa5b", "metric")
         response.enqueue(object : Callback<weatherapp> {
             override fun onResponse(call: Call<weatherapp>, response: Response<weatherapp>) {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
 
-                    val temperature = responseBody.main.temp.toString()
+                    val temperature = responseBody.main.temp
+                    kelvinToCelsius(temperature).toString()
                     val humidity = responseBody.main.humidity
                     val windSpeed = responseBody.wind.speed
                     val sunrise = responseBody.sys.sunrise.toLong()
@@ -136,3 +140,6 @@ class MainActivity : AppCompatActivity() {
         return sdf.format(Date())
     }
 }
+
+
+
